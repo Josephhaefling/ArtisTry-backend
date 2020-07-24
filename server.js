@@ -8,11 +8,11 @@ app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Pet Box';
 
 app.get('/', (request, response) => {
-  response.send('Oh hey Joe');
+  response.send('ArtisTry Backend');
 });
 
 app.locals.favorites = [
-  { id: 'a1', title: 'Jessica', artist: 'dog' },
+  { id: 'a1', title: 'Jessica', artist: 'dog', url: 'some/url' },
   { id: 'b2', title: 'Marcus Aurelius', Artist: 'parakeet' },
   { id: 'c3', title: 'Craisins', Artist: 'cat' }
 ];
@@ -30,7 +30,7 @@ app.post('/api/v1/favorites', (request, response) => {
   const id = shortid.generate();
   const favorite = request.body;
 
-  for (let requiredParameter of ['artist', 'title']) {
+  for (let requiredParameter of ['artist', 'title', ]) {
     if (!favorite[requiredParameter]) {
       return response
         .status(422)
