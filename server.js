@@ -65,10 +65,21 @@ app.get('/api/v1/favorites', (request, response) => {
   response.json({ favorites });
 });
 
+app.get('/api/v1/favorites:contentId', (request, response) => {
+  const { favorites } = app.locals
+  const { contentId } = request.params
+  const favToRemove = favorites.find(favorite => favorite.contentId === contentId)
+
+    if(!favorites) {
+      return response.sendStatus(404)
+    }
+
+  response.json({ favToRemove });
+});
+
 app.post('/api/v1/favorites', (request, response) => {
   const id = shortid.generate();
   const favorite = request.body;
-  // const {title, contentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name } = request.body
 
   for (let requiredParameter of [
     'title',
@@ -88,31 +99,38 @@ app.post('/api/v1/favorites', (request, response) => {
         .send({ error: `Expected format: { artist: <String>, title: <String> }. You're missing a "${requiredParameter}" property.` });
     }
   }
+  const { title, contentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name } = favorite;
+  app.locals.favorites.push({ title, contentId, artistContentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name });
+  response.status(201).json({ artistName, title});
+});
 
   app.delete('/api/v1/favorites/:contentId'), (request, response) => {
-
-    const favorites = app.locals.getFavorites
-    const contentId = request.body
-    const favToRemove = favorites.find(favorite = favorite.contentId === contentId)
-    console.log(favToRemove);
+    const { favorites } = app.locals
+    const { contentId } = request.params
+    const ParsedId = parseInt(contentId)
+    const favToRemove = favorites.find(favorite => favorite.contentId === contentId)
     const index = favorites.indexOf(favToRemove)
-    favroites.slice(index)
-
-    for (let requiredParameter of [
-      'contentId'
-    ])
+    favorites.slice(index)
 
     if(!contentId[requiredParameter]) {
       return response
         .status(422)
         .send({ error: `Expected format: { contentId: <number> }. You're missing a "${requiredParameter}" property.` });
     }
-  }
 
-  const { title, contentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name } = favorite;
-  app.locals.favorites.push({ title, contentId, artistContentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name });
-  response.status(201).json({ artistName, title});
-});
+    return response.status(202).json(favorites)
+  }
+  // app.delete('/api/v1/reservations/:id', (request, response) => {
+  //   const { id } = request.params;
+  //   const parsedId = parseInt(id);
+  //   const match = app.locals.reservations.find(reservation => parseInt(reservation.id) === parsedId);
+  //   if (!match) {
+  //     return response.status(404).json({ error: `No reservation found with an id of ${id}.` })
+  //   }
+  //   const updatedReservations = app.locals.reservations.filter(reservation => parseInt(reservation.id) !== parsedId);
+  //   app.locals.reservations = updatedReservations;
+  //   return response.status(202).json(app.locals.reservations)
+  // });
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on http://localhost:${app.get('port')}.`);
