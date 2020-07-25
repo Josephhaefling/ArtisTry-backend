@@ -56,6 +56,7 @@ app.locals.favorites = [
     },
   ]
 
+
 app.get('/api/v1/favorites', (request, response) => {
   const favorites = app.locals.favorites;
     if(!favorites) {
@@ -65,17 +66,6 @@ app.get('/api/v1/favorites', (request, response) => {
   response.json({ favorites });
 });
 
-app.get('/api/v1/favorites:contentId', (request, response) => {
-  const { favorites } = app.locals
-  const { contentId } = request.params
-  const favToRemove = favorites.find(favorite => favorite.contentId === contentId)
-
-    if(!favorites) {
-      return response.sendStatus(404)
-    }
-
-  response.json({ favToRemove });
-});
 
 app.post('/api/v1/favorites', (request, response) => {
   const id = shortid.generate();
@@ -104,33 +94,23 @@ app.post('/api/v1/favorites', (request, response) => {
   response.status(201).json({ artistName, title});
 });
 
-  app.delete('/api/v1/favorites/:contentId'), (request, response) => {
-    const { favorites } = app.locals
-    const { contentId } = request.params
-    const ParsedId = parseInt(contentId)
-    const favToRemove = favorites.find(favorite => favorite.contentId === contentId)
-    const index = favorites.indexOf(favToRemove)
-    favorites.slice(index)
 
-    if(!contentId[requiredParameter]) {
-      return response
-        .status(422)
-        .send({ error: `Expected format: { contentId: <number> }. You're missing a "${requiredParameter}" property.` });
+  app.delete('/api/v1/favorites/:contentId', (request, response) => {
+    const { contentId } = request.params;
+    const parsedId = parseInt(contentId);
+    const match = app.locals.favorites.find(painting => parseInt(painting.contentId) === parsedId);
+
+    if (!match) {
+      return response.status(404).json({ error: `No painting found with an id of ${contentId}.` })
     }
 
-    return response.status(202).json(favorites)
-  }
-  // app.delete('/api/v1/reservations/:id', (request, response) => {
-  //   const { id } = request.params;
-  //   const parsedId = parseInt(id);
-  //   const match = app.locals.reservations.find(reservation => parseInt(reservation.id) === parsedId);
-  //   if (!match) {
-  //     return response.status(404).json({ error: `No reservation found with an id of ${id}.` })
-  //   }
-  //   const updatedReservations = app.locals.reservations.filter(reservation => parseInt(reservation.id) !== parsedId);
-  //   app.locals.reservations = updatedReservations;
-  //   return response.status(202).json(app.locals.reservations)
-  // });
+    const updatedPaintings = app.locals.favorites.filter(painting => parseInt(painting.contentId) !== parsedId);
+
+    app.locals.favorites = updatedPaintings;
+
+    return response.status(202).json(app.locals.favorites)
+  });
+
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on http://localhost:${app.get('port')}.`);
