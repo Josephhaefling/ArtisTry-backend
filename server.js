@@ -1,17 +1,28 @@
 const express = require('express');
 const app = express();
 const shortid = require('shortid');
+
 app.use(express.json());
-
-
 app.set('port', process.env.PORT || 3001);
-app.locals.title = 'Pet Box';
+
+app.locals.title = 'ArtisTry Backend';
 
 app.get('/', (request, response) => {
   response.send('ArtisTry Backend');
 });
 
 app.locals.favorites = [
+  {
+        "title": "Mona Lisa",
+        "contentId": 225189,
+        "artistContentId": 225091,
+        "artistName": "Leonardo da Vinci",
+        "completitionYear": 1519,
+        "yearAsString": "1519",
+        "width": 2835,
+        "image": "https://uploads7.wikiart.org/images/leonardo-da-vinci/mona-lisa.jpg!Large.jpg",
+        "height": 4289
+    },
   {
       "title": "The River Thames with St. Paul's Cathedral on Lord Mayor's Day",
       "contentId": 250550,
@@ -63,7 +74,18 @@ app.post('/api/v1/favorites', (request, response) => {
   const id = shortid.generate();
   const favorite = request.body;
 
-  for (let requiredParameter of ['artist', 'title', 'url']) {
+  for (let requiredParameter of [
+    'title',
+    'contentId',
+    'artistContentId',
+    'artistName',
+    'completitionYear',
+    'yearAsString',
+    'width',
+    'image',
+    'height',
+    'name'
+    ]) {
     if (!favorite[requiredParameter]) {
       return response
         .status(422)
