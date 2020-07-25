@@ -1,9 +1,13 @@
+const cors = require('cors');
 const express = require('express');
 const app = express();
 const shortid = require('shortid');
 
+fetch(request, {mode: 'cors'});
+
 app.use(express.json());
 app.set('port', process.env.PORT || 3001);
+app.use(cors());
 
 app.locals.title = 'ArtisTry Backend';
 
