@@ -27,7 +27,8 @@ app.locals.favorites = [
         "yearAsString": "1519",
         "width": 2835,
         "image": "https://uploads7.wikiart.org/images/leonardo-da-vinci/mona-lisa.jpg!Large.jpg",
-        "height": 4289
+        "height": 4289,
+        "name": 'image'
     },
   {
       "title": "The River Thames with St. Paul's Cathedral on Lord Mayor's Day",
@@ -53,18 +54,6 @@ app.locals.favorites = [
       "height": 1260,
       "name": 'image'
     },
-    {
-      "title": "Cape Cod Morning",
-      "contentId": 235538,
-      "artistContentId": 235517,
-      "artistName": "Edward Hopper",
-      "completitionYear": 1950,
-      "yearAsString": "1950",
-      "width": 1000,
-      "image": "https://uploads1.wikiart.org/images/edward-hopper/cape-cod-morning.jpg!Large.jpg",
-      "height": 857,
-      "name": 'image'
-    }
   ]
 
 app.get('/api/v1/favorites', (request, response) => {
@@ -79,6 +68,7 @@ app.get('/api/v1/favorites', (request, response) => {
 app.post('/api/v1/favorites', (request, response) => {
   const id = shortid.generate();
   const favorite = request.body;
+  // const {title, contentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name } = request.body
 
   for (let requiredParameter of [
     'title',
@@ -99,9 +89,29 @@ app.post('/api/v1/favorites', (request, response) => {
     }
   }
 
-  const { artist, title } = pet;
-  app.locals.favorites.push({ artist, title, id });
-  response.status(201).json({ artist, title, id });
+  app.delete('/api/v1/favorites/:contentId'), (request, response) => {
+
+    const favorites = app.locals.getFavorites
+    const contentId = request.body
+    const favToRemove = favorites.find(favorite = favorite.contentId === contentId)
+    console.log(favToRemove);
+    const index = favorites.indexOf(favToRemove)
+    favroites.slice(index)
+
+    for (let requiredParameter of [
+      'contentId'
+    ])
+
+    if(!contentId[requiredParameter]) {
+      return response
+        .status(422)
+        .send({ error: `Expected format: { contentId: <number> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  const { title, contentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name } = favorite;
+  app.locals.favorites.push({ title, contentId, artistContentId, artistContentId, artistName, completitionYear, yearAsString, width, image, height, name });
+  response.status(201).json({ artistName, title});
 });
 
 app.listen(app.get('port'), () => {
