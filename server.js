@@ -11,6 +11,8 @@ app.use(express.json());
 app.set('port', process.env.PORT || 3001);
 app.use(cors());
 
+app.use(express.static("build"))
+
 app.locals.title = 'ArtisTry Backend';
 
 app.get('/', (request, response) => {
